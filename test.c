@@ -32,16 +32,17 @@ int main ()
            /  \
          20   60
         /  \     \
-       9   25    80
-         \
-          11
+       11   25    80
+      /
+     9
     */
     printf(checkValue(root, 10) ? "Value 10 exists in the three.\n" : "Value 10 does not exist in the three.\n" );
 
 
 
-    printf("AVL tree elements in ascending order.\n");
+    printf("\nAVL tree in preorder\n");
+    printPreorder(root);
+    printf("\nAVL tree in inorder\n");
     printInorder(root);
-
 	return 0;
 }
