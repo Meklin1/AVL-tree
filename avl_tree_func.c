@@ -38,7 +38,7 @@ int getHeight(Node *node)
     }
 
     if(node->left == NULL){
-        leftHeight = 0;
+        leftHeight = 1;
     }
 
     else{
@@ -46,7 +46,7 @@ int getHeight(Node *node)
     }
 
     if(node->right == NULL){
-        rightHeight = 0;
+        rightHeight = 1;
     }
 
     else{
@@ -85,6 +85,7 @@ Node* rotateRight (Node* node)
 
     return root;
 }
+
 int getBalance(Node* node)
 {
     int leftHeight;
@@ -95,7 +96,7 @@ int getBalance(Node* node)
     }
 
     if(node->left == NULL){
-        leftHeight = 0;
+        leftHeight = 1;
     }
 
     else{
@@ -103,7 +104,7 @@ int getBalance(Node* node)
     }
 
     if(node->right == NULL){
-        rightHeight = 0;
+        rightHeight = 1;
     }
 
     else{
@@ -111,6 +112,32 @@ int getBalance(Node* node)
     }
 
     return leftHeight - rightHeight;
+}
+Node* balance (Node* node)
+{
+    int balance = getBalance(node);
+
+    if (balance > 1 && getBalance(node->left) >= 0){
+        return rotateRight(node);
+    }
+
+    if (balance > 1 && getBalance(node->left) < 0)
+    {
+        node->left =  rotateLeft(node->left);
+        return rotateRight(node);
+    }
+
+    if (balance < -1 && getBalance(node->right) <= 0){
+        return rotateLeft(node);
+    }
+
+    if (balance < -1 && getBalance(node->right) > 0)
+    {
+        node->right = rotateRight(node->right);
+        return rotateLeft(node);
+    }
+
+    return node;
 }
 
 Node* insert(Node* node, int data)
@@ -133,29 +160,7 @@ Node* insert(Node* node, int data)
 
     node->height = getHeight(node);
 
-    int balance = getBalance(node);
-
-    if (balance > 1 && getBalance(node->left) > 0){
-        return rotateRight(node);
-    }
-
-    if (balance > 1 && getBalance(node->left) < 0)
-    {
-        node->left =  rotateLeft(node->left);
-        return rotateRight(node);
-    }
-
-    if (balance < -1 && getBalance(node->right) < 0){
-        return rotateLeft(node);
-    }
-
-    if (balance < -1 && getBalance(node->right) > 0)
-    {
-        node->right = rotateRight(node->right);
-        return rotateLeft(node);
-    }
-
-    return node;
+    return balance(node);
 }
 
 Node* deleteNode(Node* node, int data)
@@ -189,23 +194,11 @@ Node* deleteNode(Node* node, int data)
         else
         {
             Node* temp = node->right;
-            if(temp->left == NULL){
-                 node->data = temp->data;
-                 free(temp);
-                 node->right = NULL;
+            while (temp->left != NULL){
+                temp = temp->left;
             }
-            else{
-                int tempVal = node->right->data;
-                while (temp->left){
-                    if(temp->left->left == NULL){
-                        node->data = temp->left->data;
-                        free(temp->left);
-                        temp->left = NULL;
-                        break;
-                    }
-
-                }
-            }
+            node->data = temp->data;
+            node->right = deleteNode(node->right, temp->data);
         }
     }
 
@@ -214,29 +207,7 @@ Node* deleteNode(Node* node, int data)
     }
 
     node->height = getHeight(node);
-    int balance = getBalance(node);
-
-    if (balance > 1 && getBalance(node->left) >= 0){
-        return rotateRight(node);
-    }
-
-    if (balance > 1 && getBalance(node->left) < 0)
-    {
-        node->left =  rotateLeft(node->left);
-        return rotateRight(node);
-    }
-
-    if (balance < -1 && getBalance(node->right) <= 0){
-        return rotateLeft(node);
-    }
-
-    if (balance < -1 && getBalance(node->right) > 0)
-    {
-        node->right = rotateRight(node->right);
-        return rotateLeft(node);
-    }
-
-    return node;
+    return balance(node);
 }
 
 void printPreorder(Node* node)
