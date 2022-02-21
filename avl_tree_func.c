@@ -23,6 +23,9 @@ int checkValue (Node* node, int data)
 Node* newNode(int data)
 {
     Node* node = (Node*)calloc(1, sizeof(Node));
+    if(!node){
+        return NULL:
+    }
     node->data = data;
     node->height = 1;
     return node;
